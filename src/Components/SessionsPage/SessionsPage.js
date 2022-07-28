@@ -28,7 +28,7 @@ function Sessions() {
 
     return (
         <>
-            {movie.days !== undefined && (
+            {movie.days !== undefined ? (
                 <>
                     <div className="sessions">
                         
@@ -40,9 +40,13 @@ function Sessions() {
                             ))}
                     </div>
                     
-                    <BottomBar info={movie}/> 
+                    <BottomBar 
+                        info={movie}
+                        session={null}
+                    /> 
                 </>   
-            )}
+            ) : 
+            <p>Carregando...</p>}
         </>
     );
 }
@@ -67,7 +71,7 @@ function SessionList({ showtimes }) {
     return (
         <div className="session-list">
             {showtimes.map(session => 
-                <Link key={ session.id } to={`/assentos/:${ session.id }`}>
+                <Link key={ session.id } to={`/assentos/${ session.id }`}>
                     <div><h3>{ session.name }</h3></div>
                 </Link>
             )}

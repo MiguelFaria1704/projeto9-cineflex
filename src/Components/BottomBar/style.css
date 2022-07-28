@@ -9,11 +9,13 @@
     align-items: center;
     justify-content: left;
     border-top: 1px solid #9EADBA;
+    padding: 0 14px;
 }
 
 .bottom-bar h2 {
     font-size: 26px;
     line-height: 30.5px;
+    margin: 0;
 }
 
 .bottom-bar > div:first-child {
@@ -25,7 +27,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 14px;
+    margin-right:14px;
 }
 
 .bottom-bar img {

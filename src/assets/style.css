@@ -11,10 +11,10 @@ body,
     background-color: #FFFFFF;
 }
 
-h2, h3 {
+h2, h3, p {
     font-family: 'Roboto', sans-serif;
     font-weight: 400;
-    flood-color: #293845;
+    color: #293845;
 }
 
 h2 {

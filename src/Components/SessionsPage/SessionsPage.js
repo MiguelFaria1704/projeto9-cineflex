@@ -19,7 +19,7 @@ function Sessions() {
     const [movie, setMovie] = useState({});
     
     useEffect(() => {
-        const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/movies/${idFilme}/showtimes`);
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v7/cineflex/movies/${idFilme}/showtimes`);
         
         promise.then(answer => {
             setMovie(answer.data);

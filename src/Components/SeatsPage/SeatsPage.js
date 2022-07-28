@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Link, useParams }  from "react-router-dom";
+import { useNavigate, useParams }  from "react-router-dom";
 import { useState, useEffect } from "react";
 import BottomBar from "../BottomBar/BottomBar";
 import "./style.css";
@@ -17,12 +17,9 @@ function Order () {
     const { idSessao } = useParams();
     const [session, setSession] = useState({});
     const [seats, setSeats] = useState([]);
-    const [buyerName, setBuyerName] = useState("");
-    const [buyerCPF, setBuyerCPF] = useState("");
-    const [numSeats, setNumSeats] = useState(0);
 
     useEffect(() => {
-        const promise = axios.get(`https://mock-api.driven.com.br/api/v5/cineflex/showtimes/${idSessao}/seats`);
+        const promise = axios.get(`https://mock-api.driven.com.br/api/v7/cineflex/showtimes/${idSessao}/seats`);
         
         promise.then(answer => {
             setSession(answer.data);
@@ -36,13 +33,9 @@ function Order () {
                         <Seats 
                             info={session.seats} 
                             setSeats={setSeats}
-                            numSeats={numSeats}
-                            setNumSeats={setNumSeats}
+                            seats={seats}    
                         />
-                        <Buyer 
-                            setBuyerName={setBuyerName}
-                            setBuyerCPF={setBuyerCPF}
-                        />
+                        <Buyer seats={seats}/>
                         <BottomBar 
                             info={session.movie}
                             session={session}
@@ -54,10 +47,9 @@ function Order () {
     ); 
 }
 
-function Seats({ 
-    info,
-    numSeats, 
-    setNumSeats 
+function Seats({ info, 
+    setSeats,
+    seats
 }) {  
     return (
         <>
@@ -68,8 +60,8 @@ function Seats({
                         id={seat.id}
                         name={seat.name}
                         isAvailable={seat.isAvailable}
-                        numSeats={numSeats}
-                        setNumSeats={setNumSeats}
+                        setSeats={setSeats}
+                        seats={seats}
                     />
                 ))}
             </div>
@@ -82,8 +74,8 @@ function Seat({
     id,
     name,
     isAvailable,
-    numSeats, 
-    setNumSeats
+    setSeats,
+    seats
 }) {
     const [status, setStatus] = useState("available");
 
@@ -93,19 +85,17 @@ function Seat({
     }
     }, []);
     
-
     return (
         <div className={`seat ${status}`} onClick={() => {
             if(isAvailable !== false) {
                 if(status === "selected" ) {
                     setStatus("available");
-                    setNumSeats(numSeats - 1);
                 }   else {
                         setStatus("selected");
-                        setNumSeats(numSeats + 1); 
+                        setSeats([...seats, id])
                 }              
             } else {
-                return;
+                alert("Esse assento não está disponível");
             }
         }}>
             <p>{ name }</p>
@@ -132,13 +122,42 @@ function Label() {
     ); 
 }
 
-function Buyer() {
+function Buyer({ seats }) {
+    const [buyerName, setBuyerName] = useState("");
+    const [buyerCPF, setBuyerCPF] = useState("");
+    const navigate = useNavigate();
+
+    function handleName(event) {
+        setBuyerName(event.target.value);
+    }
+
+    function handleCPF(event) {
+        setBuyerCPF(event.target.value);
+    }
+
+    function handleSubmit(event) {
+        const details = {
+            ids: seats,
+            name: buyerName,
+            cpf: buyerCPF
+        }
+
+        event.preventDefault();
+
+        const promise = axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", details)
+        
+        promise.then(() => {
+            navigate("/sucesso");
+            console.log(details)
+        });   
+    }
+
     return (
-        <form /*onSubmit={handleSubmit}*/>
+        <form onSubmit={handleSubmit}>
             <h3>Nome do comprador:</h3>
-            <input type="text" name="name" placeholder="Digite seu nome..." /*onChange={handleName}*/ required></input>
+            <input type="text" name="name" placeholder="Digite seu nome..." onChange={handleName} required></input>
             <h3>CPF do comprador:</h3>
-            <input type="text" name="cpf" placeholder="Digite seu CPF..." /*onChange={handleCPF}*/ required></input>
+            <input type="text" name="cpf" placeholder="Digite seu CPF..." onChange={handleCPF} required maxLength="11" minLength="11"></input>
             <input type="submit" value="Reservar assento(s)"></input>
         </form>
     );

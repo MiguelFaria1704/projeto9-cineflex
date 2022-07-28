@@ -11,10 +11,25 @@ body,
     background-color: #FFFFFF;
 }
 
-h2 {
+h2, h3 {
     font-family: 'Roboto', sans-serif;
-    font-size: 24px;
     font-weight: 400;
     flood-color: #293845;
+}
+
+h2 {
+    font-size: 24px;
     margin: 40px 0;
+}
+
+h3 {
+    font-size: 20px;
+}
+
+.root > div:last-child {
+    margin: 67px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }

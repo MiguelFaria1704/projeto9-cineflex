@@ -3,26 +3,23 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./style.css";
 
-export default function Home({setIdFilme, idFilme}) {
+export default function Home() { 
     return (
         <div className="home">
             <h2>Selecione o Filme</h2>
-            <Movies 
-                setIdFilme={setIdFilme}
-                idFilme={idFilme}
-            />
+            <Movies/>
         </div>
     );
 }
 
-function Movies({setIdFilme, idFilme}) {
+function Movies() {
     const [list, setList] = useState([]);
 
     useEffect(() => {
         const promise = axios.get("https://mock-api.driven.com.br/api/v5/cineflex/movies");
         
         promise.then(answer => {
-        setList(answer.data);
+            setList(answer.data);
     });
     }, []);
 
@@ -32,21 +29,15 @@ function Movies({setIdFilme, idFilme}) {
                 <Movie
                     key={movie.id} 
                     info={movie}
-                    idFilme={idFilme}
-                    setIdFilme={setIdFilme}
                 />
             ))}
         </div>
     );
 }
 
-function Movie({
-    info,
-    idFilme,
-    setIdFilme
-}) {
+function Movie({ info }) {
     return (
-        <Link to={`/sessoes/:${idFilme}`} onClick={setIdFilme(info.id)}>
+        <Link to={`/sessoes/${info.id}`}>
             <div className="movie-container">
                 <img src={info.posterURL} alt="Poster"/>
             </div>

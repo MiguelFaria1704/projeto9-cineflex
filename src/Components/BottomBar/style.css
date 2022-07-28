@@ -1,0 +1,34 @@
+.bottom-bar {
+    background-color: #DFE6ED;
+    width: 100%;
+    min-height: 117px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    border-top: 1px solid #9EADBA;
+}
+
+.bottom-bar h2 {
+    font-size: 26px;
+    line-height: 30.5px;
+}
+
+.bottom-bar > div:first-child {
+    width: 64px;
+    height: 89px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 14px;
+}
+
+.bottom-bar img {
+    width: 48px;
+    height: 72px;
+}

@@ -12,4 +12,27 @@
     justify-content: center;
     align-items: center;
     background-color: #C3CFD9;
+    position: relative;
+}
+
+.back {
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 5%;
+    top: calc(50% - 15px);
+    cursor: default;
+    transition-duration: 0.5s;
+}
+
+.back:hover,
+.back:active {
+    background-color: #E8833A;
+    color: #FFFFFF;
 }

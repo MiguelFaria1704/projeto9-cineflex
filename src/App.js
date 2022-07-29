@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
 import Top from "./Components/Top/Top";
 import Home from "./Components/Home/Home";
 import SessionsPage from "./Components/SessionsPage/SessionsPage";

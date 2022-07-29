@@ -16,7 +16,8 @@ export default function SeatsPage() {
 function Order () {
     const { idSessao } = useParams();
     const [session, setSession] = useState({});
-    const [seats, setSeats] = useState([]);
+    const [seatsNames, setSeatsNames] = useState([]);
+    const [seatsIds, setSeatsIds] = useState([]); 
 
     useEffect(() => {
         const promise = axios.get(`https://mock-api.driven.com.br/api/v7/cineflex/showtimes/${idSessao}/seats`);
@@ -32,10 +33,16 @@ function Order () {
                     <>
                         <Seats 
                             info={session.seats} 
-                            setSeats={setSeats}
-                            seats={seats}    
+                            seatsNames={seatsNames}
+                            setSeatsNames={setSeatsNames}
+                            seatsIds={seatsIds}
+                            setSeatsIds={setSeatsIds}   
                         />
-                        <Buyer seats={seats}/>
+                        <Buyer 
+                            seatsNames={seatsNames}
+                            seatsIds={seatsIds}
+                            session={session}
+                        />
                         <BottomBar 
                             info={session.movie}
                             session={session}
@@ -47,9 +54,12 @@ function Order () {
     ); 
 }
 
-function Seats({ info, 
-    setSeats,
-    seats
+function Seats({ 
+    info, 
+    seatsNames,
+    setSeatsNames,
+    seatsIds,
+    setSeatsIds
 }) {  
     return (
         <>
@@ -60,8 +70,10 @@ function Seats({ info,
                         id={seat.id}
                         name={seat.name}
                         isAvailable={seat.isAvailable}
-                        setSeats={setSeats}
-                        seats={seats}
+                        seatsNames={seatsNames}
+                        setSeatsNames={setSeatsNames}
+                        seatsIds={seatsIds}
+                        setSeatsIds={setSeatsIds}
                     />
                 ))}
             </div>
@@ -74,8 +86,10 @@ function Seat({
     id,
     name,
     isAvailable,
-    setSeats,
-    seats
+    seatsNames,
+    setSeatsNames,
+    seatsIds,
+    setSeatsIds
 }) {
     const [status, setStatus] = useState("available");
 
@@ -92,13 +106,23 @@ function Seat({
                     setStatus("available");
                 }   else {
                         setStatus("selected");
-                        setSeats([...seats, id])
+                        name.length === 1 ? (
+                            setSeatsNames([...seatsNames,`0${name}`])
+                        ) : (
+                            setSeatsNames([...seatsNames,name])
+                        )
+                        
+                        setSeatsIds([...seatsIds, id]);
                 }              
             } else {
                 alert("Esse assento não está disponível");
             }
         }}>
-            <p>{ name }</p>
+            {name.length === 1 ? (
+                <p>0{ name }</p>
+            ) : (
+                <p>{ name }</p>
+            )}
         </div>
     );
 }
@@ -122,7 +146,11 @@ function Label() {
     ); 
 }
 
-function Buyer({ seats }) {
+function Buyer({ 
+    seatsNames,
+    seatsIds,
+    session
+}) {
     const [buyerName, setBuyerName] = useState("");
     const [buyerCPF, setBuyerCPF] = useState("");
     const navigate = useNavigate();
@@ -136,29 +164,55 @@ function Buyer({ seats }) {
     }
 
     function handleSubmit(event) {
-        const details = {
-            ids: seats,
+        let details = {
+            ids: seatsIds,
             name: buyerName,
             cpf: buyerCPF
         }
 
         event.preventDefault();
 
-        const promise = axios.post("https://mock-api.driven.com.br/api/v5/cineflex/seats/book-many", details)
+        const promise = axios.post("https://mock-api.driven.com.br/api/v7/cineflex/seats/book-many", details)
         
         promise.then(() => {
-            navigate("/sucesso");
-            console.log(details)
+            navigate("/sucesso", {state:{
+                name: buyerName,
+                cpf: buyerCPF,
+                seats: seatsNames,
+                session: session
+            }});
+            setBuyerName("");
+            setBuyerCPF("");
         });   
     }
 
     return (
         <form onSubmit={handleSubmit}>
-            <h3>Nome do comprador:</h3>
-            <input type="text" name="name" placeholder="Digite seu nome..." onChange={handleName} required></input>
-            <h3>CPF do comprador:</h3>
-            <input type="text" name="cpf" placeholder="Digite seu CPF..." onChange={handleCPF} required maxLength="11" minLength="11"></input>
-            <input type="submit" value="Reservar assento(s)"></input>
+            <label htmlFor="name"><h3>Nome do comprador:</h3></label>
+            <input 
+                type="text" 
+                name="name" 
+                placeholder="Digite seu nome..." 
+                value={buyerName}
+                onChange={handleName} 
+                required>
+            </input>
+
+            <label htmlFor="cpf"><h3>CPF do comprador:</h3></label>
+            <input 
+                type="text" 
+                name="cpf" 
+                placeholder="Digite seu CPF..." 
+                value={buyerCPF}
+                onChange={handleCPF} 
+                required maxLength="11" 
+                minLength="11">
+            </input>
+
+            <input 
+                type="submit" 
+                value="Reservar assento(s)">
+            </input>
         </form>
     );
 }

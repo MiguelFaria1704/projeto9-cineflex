@@ -99,7 +99,11 @@ input[type="submit"] {
 
 form h3 {
     font-size: 18px;
-    width: 100%;;
+    width: 100%;
     text-align: left;
     line-height: 25px;
+}
+
+label {
+    width: 100%;
 }

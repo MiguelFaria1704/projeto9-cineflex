@@ -18,13 +18,17 @@
 }
 
 .details h3 {
-    line-height: 24px;
+    line-height: 28px;
 }
 
 .details {
     width: 100%;
     text-align: left;
     margin-bottom: 30px;
+}
+
+.details > div {
+    margin-bottom: 10px;
 }
 
 button {

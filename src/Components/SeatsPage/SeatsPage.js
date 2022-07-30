@@ -36,7 +36,7 @@ function Order () {
                             seatsNames={seatsNames}
                             setSeatsNames={setSeatsNames}
                             seatsIds={seatsIds}
-                            setSeatsIds={setSeatsIds}   
+                            setSeatsIds={setSeatsIds} 
                         />
                         <Buyer 
                             seatsNames={seatsNames}
@@ -59,7 +59,7 @@ function Seats({
     seatsNames,
     setSeatsNames,
     seatsIds,
-    setSeatsIds
+    setSeatsIds,
 }) {  
     return (
         <>
@@ -102,8 +102,10 @@ function Seat({
     return (
         <div className={`seat ${status}`} onClick={() => {
             if(isAvailable !== false) {
-                if(status === "selected" ) {
+                if(status === "selected" && window.confirm("Tem certeza que deseja remover o assento e apagar os dados?" ) === true) {
                     setStatus("available");
+                    setSeatsNames(seatsNames.filter(item => item !== name));
+                    setSeatsIds(seatsIds.filter(item => item !== id));
                 }   else {
                         setStatus("selected");
                         name.length === 1 ? (
@@ -151,23 +153,41 @@ function Buyer({
     seatsIds,
     session
 }) {
-    const [buyerName, setBuyerName] = useState("");
-    const [buyerCPF, setBuyerCPF] = useState("");
+    const [buyersNames, setBuyersNames] = useState({});
+    const [buyersCPFs, setBuyersCPFs] = useState({});
     const navigate = useNavigate();
 
     function handleName(event) {
-        setBuyerName(event.target.value);
+        setBuyersNames({...buyersNames, [event.target.name]: event.target.value});
     }
 
     function handleCPF(event) {
-        setBuyerCPF(event.target.value);
+        setBuyersCPFs({...buyersCPFs, [event.target.name]: event.target.value});
+    }
+
+
+    function getBuyersInfo() {
+        let buyers = [];
+        let names = Object.keys(buyersNames).map((key) => [buyersNames[key]]);
+        let cpfs = Object.keys(buyersCPFs).map((key) => [buyersCPFs[key]]);
+
+        for(let i = 0; i < seatsIds.length; i++) {
+            buyers.push({
+                idAssento: seatsIds[i],
+                nome: names[i],
+                cpf: cpfs[i]
+            });
+        }
+
+        return buyers;
     }
 
     function handleSubmit(event) {
+        let buyers = getBuyersInfo();
+        
         let details = {
             ids: seatsIds,
-            name: buyerName,
-            cpf: buyerCPF
+            compradores: buyers
         }
 
         event.preventDefault();
@@ -176,38 +196,41 @@ function Buyer({
         
         promise.then(() => {
             navigate("/sucesso", {state:{
-                name: buyerName,
-                cpf: buyerCPF,
+                buyers: buyers,
                 seats: seatsNames,
                 session: session
             }});
-            setBuyerName("");
-            setBuyerCPF("");
+            setBuyersNames("");
+            setBuyersCPFs("");
         });   
     }
-
+    
     return (
         <form onSubmit={handleSubmit}>
-            <label htmlFor="name"><h3>Nome do comprador:</h3></label>
-            <input 
-                type="text" 
-                name="name" 
-                placeholder="Digite seu nome..." 
-                value={buyerName}
-                onChange={handleName} 
-                required>
-            </input>
+            {seatsNames.map((name, index) => (
+                <div className="form-fields" key={index}>
+                    <label htmlFor={`name${name}`}><h3>Nome do comprador (Assento {name}):</h3></label>
+                    <input 
+                        type="text" 
+                        name={`name${name}`} 
+                        placeholder="Digite seu nome..." 
+                        //value={buyerName}
+                        onChange={handleName} 
+                        required>
+                    </input>
 
-            <label htmlFor="cpf"><h3>CPF do comprador:</h3></label>
-            <input 
-                type="text" 
-                name="cpf" 
-                placeholder="Digite seu CPF..." 
-                value={buyerCPF}
-                onChange={handleCPF} 
-                required maxLength="11" 
-                minLength="11">
-            </input>
+                    <label htmlFor={`cpf${name}`}><h3>CPF do comprador (Assento {name}):</h3></label>
+                    <input 
+                        type="text" 
+                        name={`cpf${name}`}
+                        placeholder="Digite seu CPF..." 
+                        //value={buyerCPF}
+                        onChange={handleCPF} 
+                        required maxLength="11" 
+                        minLength="11">
+                    </input>
+                </div>
+            ))}
 
             <input 
                 type="submit" 

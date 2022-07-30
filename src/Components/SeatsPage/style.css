@@ -101,9 +101,13 @@ form h3 {
     font-size: 18px;
     width: 100%;
     text-align: left;
-    line-height: 25px;
+    line-height: 35px;
 }
 
 label {
     width: 100%;
+}
+
+.form-fields {
+    margin-bottom: 20px;
 }

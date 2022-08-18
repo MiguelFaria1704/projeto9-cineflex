@@ -2,7 +2,7 @@
 
 An easy way to buy tickets for movie sections. Pick the movie you want to watch, choose the best section and seats for you and check your order details.
 
-<img src="/src/assets/TrackIt-prevew.gif" />
+<img src="/src/assets/cineflex-preview.gif" />
 
 You can try it out at [https://track-it-delta.vercel.app/](https://cineflex-rouge-five.vercel.app/)
 
